@@ -30,10 +30,17 @@ const $fxLayer = document.getElementById("fx-layer");
 const $helpTooltip = document.getElementById("help-tooltip");
 const $puzzleVideo = document.getElementById("puzzle-video");
 const $puzzleCongrats = document.getElementById("puzzle-congrats");
+const $bgNote = document.getElementById("bg-note");
+const $noteToggle = document.getElementById("note-toggle");
+const $notePanel = document.getElementById("note-panel");
+const $noteBody = document.getElementById("note-body");
+const $noteClose = document.querySelector("#note-panel .note-close");
+const $noteHint = document.getElementById("note-hint");
 
 const covers = Array.from(document.querySelectorAll(".cover"));
 const TOTAL_PIECES = covers.length;
 let idx = 0;
+let noteTimer;
 
 function normalizeAnswer(s) {
   return String(s)
@@ -116,8 +123,9 @@ function finishGame() {
         if (p && typeof p.then === "function") p.catch(() => {});
       } catch {}
     }
-    if ($puzzleCongrats) $puzzleCongrats.hidden = false;
-  }, 1000);
+    if ($puzzleCongrats) { $puzzleCongrats.hidden = true; }
+    if (noteTimer) { clearTimeout(noteTimer); }
+    noteTimer = setTimeout(() => { showNoteHint(); }, 20000);}, 1000);
 }
 
 function playCorrectFx() {
@@ -176,6 +184,15 @@ function playWrongSound() {
   beep(220, 0.18, 'sawtooth', 0.05);
 }
 
+function showNoteHint() {
+  if ($bgNote) {
+    $bgNote.hidden = false;
+    if ($noteBody) { try { $noteBody.textContent = data.finalMessage || 'Lời nhắn yêu thương 💌'; } catch {} }
+    if ($noteToggle) { $noteToggle.classList.add('pulse'); }
+    if ($noteHint) { $noteHint.hidden = false; }
+  }
+}
+
 function restart() {
   idx = 0;
   covers.forEach((c) => c.classList.remove("revealed"));
@@ -190,8 +207,13 @@ function restart() {
     try { $puzzleVideo.pause(); $puzzleVideo.currentTime = 0; $puzzleVideo.hidden = true; } catch {}
   }
   if ($puzzleCongrats) $puzzleCongrats.hidden = true;
+  if ($bgNote) $bgNote.hidden = true;
+  if ($notePanel) $notePanel.classList.remove('show');
+  if ($noteToggle) $noteToggle.classList.remove('pulse');
+  if ($noteHint) $noteHint.hidden = true;
+  if (noteTimer) { clearTimeout(noteTimer); noteTimer = null; }
   renderQuestion();
-
+}
 (function setupStickyAnniv(){
   const header = document.querySelector('.site-header');
   if (!$stickyAnniv || !header) return;
@@ -217,7 +239,7 @@ function restart() {
     onScroll();
   }
 })();
-}
+
 
 $submit.addEventListener("click", handleSubmit);
 $input.addEventListener("keydown", (e) => {
@@ -238,6 +260,20 @@ if ($helpBtn && $helpModal) {
 }
 
 renderQuestion();
+
+if ($noteToggle && $notePanel) {
+  const openPanel = () => {
+    if ($notePanel.hidden) $notePanel.hidden = false;
+    $notePanel.classList.add('show');
+    if ($noteToggle) $noteToggle.classList.remove('pulse');
+    if ($noteHint) $noteHint.hidden = true;
+  };
+  $noteToggle.addEventListener('click', openPanel);
+  if ($noteClose) $noteClose.addEventListener('click', () => {
+    $notePanel.classList.remove('show');
+    setTimeout(() => { $notePanel.hidden = true; }, 280);
+  });
+}
 
 (function initHelpHint(){
   if ($helpTooltip && $helpBtn) {

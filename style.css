@@ -113,6 +113,76 @@ html, body {
   100% { transform: translate(0,0) rotate(0deg); }
 }
 
+.bg-note {
+  position: fixed;
+  top: 50%;
+  right: clamp(8px, 4vw, 24px);
+  transform: translateY(-50%);
+  z-index: 6;
+}
+@media (max-width: 480px) {
+  .bg-note { top: auto; right: auto; left: 50%; bottom: 10px; transform: translateX(-50%); }
+}
+
+.note-toggle {
+  position: relative;
+  width: 72px; height: 56px;
+  border: 1.8px solid var(--black);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fff, #ffeaf5);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.note-toggle:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(0,0,0,0.14); }
+.note-toggle::before {
+  content: "";
+  position: absolute;
+  left: 6px; right: 6px; top: 6px;
+  height: 0; border-left: 24px solid transparent; border-right: 24px solid transparent; border-bottom: 24px solid var(--pink);
+  border-bottom-color: var(--pink-strong);
+  filter: drop-shadow(0 1px 0 rgba(0,0,0,0.2));
+}
+.note-toggle::after {
+  content: "";
+  position: absolute;
+  left: 10px; right: 10px; bottom: 8px; top: 26px;
+  background: var(--pink);
+  border: 1.5px solid var(--black);
+  border-radius: 8px;
+}
+.note-toggle .note-heart {
+  position: absolute;
+  top: 16px; left: 50%; transform: translateX(-50%) rotate(45deg);
+  width: 16px; height: 16px; background: #f04886; border-radius: 4px;
+}
+.note-toggle .note-heart::before, .note-toggle .note-heart::after {
+  content: ""; position: absolute; width: 16px; height: 16px; background: #f04886; border-radius: 50%;
+}
+.note-toggle .note-heart::before { left: -8px; top: 0; }
+.note-toggle .note-heart::after { left: 0; top: -8px; }
+.note-toggle.pulse::after { animation: pulseRing 1.8s ease-out infinite; border-color: transparent; }
+
+.note-panel {
+  position: relative;
+  margin-top: 10px;
+  opacity: 0; transform: translateY(8px) scale(0.98);
+  transition: opacity 280ms ease, transform 280ms ease;
+}
+.note-panel.show { opacity: 1; transform: translateY(0) scale(1); }
+.note-card {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--black);
+  border: 1.5px solid var(--black);
+  border-radius: 12px;
+  padding: 10px 14px;
+  max-width: min(38vw, 320px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  backdrop-filter: blur(2px);
+}
+.note-title { font-weight: 700; margin-bottom: 6px; }
+.note-close { margin-top: 8px; background: var(--pink-strong); }
+
 .bg-decor {
   position: fixed;
   inset: 0;
@@ -210,15 +280,40 @@ html, body {
 
 .puzzle-congrats {
   position: absolute;
-  left: 50%;
-  bottom: 10px;
-  transform: translateX(-50%);
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
   background: rgba(255,255,255,0.85);
   color: var(--black);
   border: 1.5px solid var(--black);
   border-radius: 12px;
   padding: 8px 12px;
-  text-align: center;
+  text-align: left;
+  max-width: min(48%, 240px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+.puzzle-congrats::before {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0; height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid var(--black);
+}
+@media (max-width: 420px) {
+  .puzzle-congrats {
+    left: 50%;
+    right: auto;
+    bottom: 10px;
+    top: auto;
+    transform: translateX(-50%);
+    max-width: min(90%, 280px);
+    text-align: center;
+  }
+  .puzzle-congrats::before { display: none; }
 }
 
 .cover {
@@ -396,6 +491,36 @@ button:active { transform: translateY(1px); }
   border-radius: 12px;
   padding: 8px 12px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.note-hint {
+  position: absolute;
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--black);
+  border: 1.5px solid var(--black);
+  border-radius: 12px;
+  padding: 6px 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  animation: hintFloat 2.6s ease-in-out infinite;
+}
+.note-hint::before {
+  content: "";
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0; height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 8px solid var(--black);
+}
+@keyframes hintFloat {
+  0% { transform: translateY(-50%) translateX(0); }
+  50% { transform: translateY(-54%) translateX(-4px); }
+  100% { transform: translateY(-50%) translateX(0); }
 }
 .help-tooltip::before {
   content: "";

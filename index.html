@@ -24,6 +24,19 @@
   <div class="bg-text" aria-hidden="true">
     <h3 class="text t2">Blue &amp; Na</h3>
   </div>
+  <div id="bg-note" class="bg-note" hidden>
+    <button id="note-toggle" class="note-toggle" aria-label="Mở lời nhắn">
+      <span class="note-heart" aria-hidden="true"></span>
+    </button>
+    <div id="note-hint" class="note-hint" hidden>Nhấn vào lá thư để đọc lời nhắn</div>
+    <div id="note-panel" class="note-panel" hidden>
+      <div class="note-card">
+        <div class="note-title">Lời nhắn</div>
+        <div id="note-body" class="note-body">Yêu thương gửi đến em 💌</div>
+        <button class="note-close" type="button" aria-label="Đóng">Đóng</button>
+      </div>
+    </div>
+  </div>
   <div id="fx-layer" class="fx-layer" aria-hidden="true"></div>
   <button id="help-btn" class="help-sticker" aria-label="Xem hướng dẫn">?</button>
   <div id="help-tooltip" class="help-tooltip" hidden>Nhấn vào nút ? để xem hướng dẫn</div>
@@ -46,14 +59,14 @@
         <img src="image1.jpg" alt="Ảnh kỷ niệm" class="puzzle-img" />
 
         <div class="cover c1" data-piece="1"></div>
-        <div class="cover c2" data-piece="2"></div>
+        <!-- <div class="cover c2" data-piece="2"></div>
         <div class="cover c3" data-piece="3"></div>
         <div class="cover c4" data-piece="4"></div>
-        <div class="cover c5" data-piece="5"></div>
-        <video id="puzzle-video" class="puzzle-video" src="music.mp4" playsinline controls hidden></video>
-        <div id="puzzle-congrats" class="puzzle-congrats" hidden>Chúc mừng! Trái tim đã hoàn chỉnh 💖</div>
+        <div class="cover c5" data-piece="5"></div> -->
+        <video id="puzzle-video" class="puzzle-video" src="anni1month.mov" playsinline controls hidden></video>
+        <div id="puzzle-congrats" class="puzzle-congrats" hidden>Lời nhắn yêu thương 💌</div>
       </div>
-      <div class="progress" id="progress">Mảnh ghép: 0/5</div>
+      <div class="progress" id="progress">Mảnh ghép: 0/1</div>
     </section>
 
     <section class="qa-section" aria-live="polite">
@@ -67,7 +80,7 @@
 
     <section id="final-section" class="final-section" hidden>
       <div class="final-visual">
-        <video id="final-video" class="final-video" src="music.mp4" controls preload="metadata" playsinline hidden></video>
+        <video id="final-video" class="final-video" src="anni1month.mov" controls preload="metadata" playsinline hidden></video>
       </div>
       <div class="final-message" id="final-message" hidden>
         Chúc mừng 1 tháng yêu xa! Dù cách xa, trái tim vẫn chung nhịp. Hẹn ngày gặp nhau thật sớm.
