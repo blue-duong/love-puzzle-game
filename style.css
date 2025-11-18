@@ -55,6 +55,10 @@ html, body {
   z-index: 2;
 }
 
+.container.focus-mode {
+  z-index: 7;
+}
+
 .bg-gradient {
   position: fixed;
   inset: 0;
@@ -253,7 +257,17 @@ html, body {
   background: var(--white);
   display: grid;
   place-items: center;
-  overflow: hidden;
+  overflow: visible;
+}
+
+.puzzle .progress {
+  position: absolute;
+  top: 10px;
+  left: calc(100% + 8px);
+  z-index: 9;
+}
+@media (max-width: 480px) {
+  .puzzle .progress { position: static; margin-top: 8px; }
 }
 
 .heart {
@@ -267,6 +281,7 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 2.5%;
 }
 
 .puzzle-video {
@@ -276,6 +291,7 @@ html, body {
   height: 100%;
   object-fit: cover;
   border: none;
+  border-radius: 2.5%;
 }
 
 .puzzle-congrats {
@@ -323,13 +339,20 @@ html, body {
   border: 2px solid var(--black);
   transform-origin: center;
   transition: opacity 380ms ease, transform 380ms ease, clip-path 380ms ease;
+  z-index: 2;
 }
 
-.cover.c1 { clip-path: polygon(0% 0%, 50% 0%, 50% 45%, 0% 45%); }
-.cover.c2 { clip-path: polygon(50% 0%, 100% 0%, 100% 45%, 50% 45%); }
-.cover.c3 { clip-path: polygon(0% 45%, 50% 45%, 50% 100%, 0% 100%); }
-.cover.c4 { clip-path: polygon(50% 45%, 100% 45%, 100% 100%, 50% 100%); }
-.cover.c5 { clip-path: polygon(22% 30%, 78% 30%, 78% 70%, 22% 70%); }
+.cover.c1 { clip-path: polygon(0% 0%, 50% 0%, 50% 45%, 0% 45%); border-top-left-radius: 2.5%; }
+.cover.c2 { clip-path: polygon(50% 0%, 100% 0%, 100% 45%, 50% 45%); border-top-right-radius: 2.5%; }
+.cover.c3 { clip-path: polygon(0% 45%, 50% 45%, 50% 100%, 0% 100%); border-bottom-left-radius: 2.5%; }
+.cover.c4 { clip-path: polygon(50% 45%, 100% 45%, 100% 100%, 50% 100%); border-bottom-right-radius: 2.5%; }
+.cover.c5 {
+  background: #000000;
+  inset: 0;
+  clip-path: none;
+  z-index: 1;
+  border-radius: 2.5%;
+}
 
 .cover.revealed {
   opacity: 0;
@@ -505,6 +528,7 @@ button:active { transform: translateY(1px); }
   padding: 6px 10px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.12);
   animation: hintFloat 2.6s ease-in-out infinite;
+  width: max-content;
 }
 .note-hint::before {
   content: "";
@@ -548,8 +572,27 @@ button:active { transform: translateY(1px); }
 .fx-layer {
   position: fixed;
   inset: 0;
-  z-index: 4;
+  z-index: 12;
   pointer-events: none;
+}
+
+.dim-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(2px);
+  z-index: 5;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease;
+}
+.dim-overlay.show { opacity: 1; }
+
+.puzzle.focus {
+  z-index: 6;
+  box-shadow: 0 0 0 3px #fff, 0 0 24px 8px rgba(245,166,207,0.6);
+  transform: scale(1.02);
+  transition: transform 200ms ease, box-shadow 200ms ease;
 }
 .fx-heart {
   position: absolute;
@@ -570,6 +613,31 @@ button:active { transform: translateY(1px); }
 .fx-heart::before { left: -8px; top: 0; }
 .fx-heart::after { left: 0; top: -8px; }
 .fx-heart.broken { background: #c1164f; opacity: 0.75; }
+
+.firework-dot {
+  position: absolute;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff, #ff8ab4);
+  opacity: 0.95;
+  animation: fwFly 900ms ease-out forwards;
+}
+@keyframes fwFly {
+  0% { transform: translate(0,0) scale(0.6); opacity: 1; }
+  100% { transform: translate(var(--fxdx, 0), var(--fxdy, -100px)) scale(1); opacity: 0; }
+}
+
+.question-text.celebrate {
+  font-weight: 800;
+  font-size: clamp(18px, 5vw, 24px);
+  border-color: #f04886;
+  box-shadow: 0 0 18px rgba(245,166,207,0.45);
+  animation: celebratePulse 1.6s ease-in-out infinite alternate;
+}
+@keyframes celebratePulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.03); }
+}
 
 @keyframes burst {
   0% { transform: translate(0,0) rotate(45deg) scale(0.8); opacity: 1; }

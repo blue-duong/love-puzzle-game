@@ -36,11 +36,16 @@ const $notePanel = document.getElementById("note-panel");
 const $noteBody = document.getElementById("note-body");
 const $noteClose = document.querySelector("#note-panel .note-close");
 const $noteHint = document.getElementById("note-hint");
+const $dimOverlay = document.getElementById("dim-overlay");
+const $puzzle = document.querySelector(".puzzle");
+const $container = document.querySelector(".container");
 
 const covers = Array.from(document.querySelectorAll(".cover"));
 const TOTAL_PIECES = covers.length;
 let idx = 0;
 let noteTimer;
+let fwInterval;
+let fwStopTimer;
 
 function normalizeAnswer(s) {
   return String(s)
@@ -100,7 +105,7 @@ function handleSubmit() {
     if (idx === TOTAL_PIECES) {
       finishGame();
     } else {
-      setTimeout(renderQuestion, 1000);
+      setTimeout(renderQuestion, 600);
     }
   } else {
     $feedback.textContent = "Sai rồi! Hãy thử lại.";
@@ -110,10 +115,15 @@ function handleSubmit() {
 }
 
 function finishGame() {
-  $qText.textContent = "Trái tim đã hoàn chỉnh!";
+  $qText.textContent = "Happy Anniversary! 💖";
+  $qText.classList.add('celebrate');
   $input.disabled = true;
   $submit.disabled = true;
   document.querySelector(".puzzle-section").setAttribute("aria-label", data.finalAlt);
+  if ($dimOverlay) { $dimOverlay.hidden = false; $dimOverlay.classList.add('show'); }
+  if ($puzzle) { $puzzle.classList.add('focus'); }
+  if ($container) { $container.classList.add('focus-mode'); }
+  launchFireworks();
   setTimeout(() => {
     if ($puzzleVideo) {
       try {
@@ -124,8 +134,10 @@ function finishGame() {
       } catch {}
     }
     if ($puzzleCongrats) { $puzzleCongrats.hidden = true; }
+    startVideoFireworks();
     if (noteTimer) { clearTimeout(noteTimer); }
-    noteTimer = setTimeout(() => { showNoteHint(); }, 20000);}, 1000);
+    noteTimer = setTimeout(() => { showNoteHint(); }, 20000);
+  }, 1000);
 }
 
 function playCorrectFx() {
@@ -158,6 +170,65 @@ function spawnHearts(n = 10, broken = false) {
     $fxLayer.appendChild(el);
     el.addEventListener('animationend', () => el.remove());
   }
+}
+
+function launchFireworks() {
+  const box = document.querySelector('.puzzle')?.getBoundingClientRect();
+  const x = (box?.left || 0) + (box?.width || 0)/2 + window.scrollX;
+  const y = (box?.top || 0) + (box?.height || 0)*0.35 + window.scrollY;
+  fireworkBurst(x, y, 28);
+  setTimeout(() => fireworkBurst(x, y + 40, 24), 300);
+  setTimeout(() => fireworkBurst(x - 60, y + 20, 20), 520);
+  setTimeout(() => fireworkBurst(x + 60, y + 20, 20), 740);
+}
+function fireworkBurst(x, y, count = 24) {
+  if (!$fxLayer) return;
+  for (let i = 0; i < count; i++) {
+    const dot = document.createElement('span');
+    dot.className = 'firework-dot';
+    const ang = Math.random() * Math.PI * 2;
+    const dist = 60 + Math.random() * 140;
+    const dx = Math.cos(ang) * dist;
+    const dy = Math.sin(ang) * dist;
+    dot.style.left = `${x}px`;
+    dot.style.top = `${y}px`;
+    dot.style.setProperty('--fxdx', `${dx}px`);
+    dot.style.setProperty('--fxdy', `${dy}px`);
+    $fxLayer.appendChild(dot);
+    dot.addEventListener('animationend', () => dot.remove());
+  }
+}
+
+function startVideoFireworks() {
+  stopVideoFireworks();
+  const target = ($video && !$video.hidden) ? $video : (($puzzleVideo && !$puzzleVideo.hidden) ? $puzzleVideo : document.querySelector('.puzzle'));
+  const emit = () => {
+    const box = target?.getBoundingClientRect();
+    if (!box) return;
+    const midX = (box.left + box.width/2) + window.scrollX;
+    const midY = (box.top + box.height/2) + window.scrollY;
+    const marginX = Math.max(20, Math.min(120, box.width * 0.12));
+    const marginY = Math.max(20, Math.min(120, box.height * 0.12));
+    const topY = box.top + window.scrollY - marginY;
+    const bottomY = box.bottom + window.scrollY + marginY;
+    const leftX = box.left + window.scrollX - marginX;
+    const rightX = box.right + window.scrollX + marginX;
+    fireworkBurst(midX, topY, 16);
+    fireworkBurst(midX, bottomY, 16);
+    fireworkBurst(leftX, midY, 14);
+    fireworkBurst(rightX, midY, 14);
+    fireworkBurst(leftX, topY, 12);
+    fireworkBurst(rightX, topY, 12);
+    fireworkBurst(leftX, bottomY, 12);
+    fireworkBurst(rightX, bottomY, 12);
+  };
+  emit();
+  fwInterval = setInterval(emit, 900);
+  fwStopTimer = setTimeout(stopVideoFireworks, 20000);
+}
+function stopVideoFireworks() {
+  if (fwInterval) { clearInterval(fwInterval); fwInterval = null; }
+  if (fwStopTimer) { clearTimeout(fwStopTimer); fwStopTimer = null; }
 }
 let audioCtx;
 function ensureAudio() {
@@ -211,6 +282,10 @@ function restart() {
   if ($notePanel) $notePanel.classList.remove('show');
   if ($noteToggle) $noteToggle.classList.remove('pulse');
   if ($noteHint) $noteHint.hidden = true;
+  if ($dimOverlay) { $dimOverlay.classList.remove('show'); $dimOverlay.hidden = true; }
+  if ($puzzle) { $puzzle.classList.remove('focus'); }
+  if ($container) { $container.classList.remove('focus-mode'); }
+  stopVideoFireworks();
   if (noteTimer) { clearTimeout(noteTimer); noteTimer = null; }
   renderQuestion();
 }

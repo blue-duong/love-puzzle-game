@@ -43,7 +43,7 @@
     <button id="note-toggle" class="note-toggle" aria-label="Mở lời nhắn">
       <span class="note-heart" aria-hidden="true"></span>
     </button>
-    <div id="note-hint" class="note-hint" hidden>Nhấn vào lá thư để đọc lời nhắn</div>
+    <div id="note-hint" class="note-hint" hidden>Nhấn vào lá thư</div>
     <div id="note-panel" class="note-panel" hidden>
       <div class="note-card">
         <div class="note-title">Lời nhắn</div>
@@ -53,6 +53,7 @@
     </div>
   </div>
   <div id="fx-layer" class="fx-layer" aria-hidden="true"></div>
+  <div id="dim-overlay" class="dim-overlay" hidden aria-hidden="true"></div>
   <button id="help-btn" class="help-sticker" aria-label="Xem hướng dẫn">?</button>
   <div id="help-tooltip" class="help-tooltip" hidden>Nhấn vào nút ? để xem hướng dẫn</div>
   <div id="help-modal" class="help-modal" hidden>
@@ -60,8 +61,8 @@
       <h3>Hướng dẫn</h3>
       <ul>
         <li>Trả lời lần lượt 5 câu hỏi để mở mảnh ảnh.</li>
-        <li>Hãy trả lời cẩn thận để có câu trả lời đúng</li>
-        <li>Sẽ có món quà bất ngờ khi hoàn thành xong thử thách</li>
+        <li>Hãy trả lời cẩn thận để có câu trả lời đúng.</li>
+        <li>Sẽ có món quà bất ngờ khi hoàn thành xong thử thách!!!</li>
         <a>Bé Na cố lên nha ❤️</a>
       </ul>
       <button class="close" type="button" aria-label="Đóng">Đóng</button>
@@ -74,14 +75,15 @@
         <img src="image1.jpg" alt="Ảnh kỷ niệm" class="puzzle-img" />
 
         <div class="cover c1" data-piece="1"></div>
-        <!-- <div class="cover c2" data-piece="2"></div>
+        <div class="cover c2" data-piece="2"></div>
         <div class="cover c3" data-piece="3"></div>
         <div class="cover c4" data-piece="4"></div>
-        <div class="cover c5" data-piece="5"></div> -->
+        <div class="cover c5" data-piece="5"></div>
         <video id="puzzle-video" class="puzzle-video" src="anni1month.mp4" playsinline controls hidden></video>
         <div id="puzzle-congrats" class="puzzle-congrats" hidden>Lời nhắn yêu thương 💌</div>
+        <div class="progress" id="progress">Mảnh ghép: 0/5</div>
       </div>
-      <div class="progress" id="progress">Mảnh ghép: 0/1</div>
+      </div>
     </section>
 
     <section class="qa-section" aria-live="polite">
