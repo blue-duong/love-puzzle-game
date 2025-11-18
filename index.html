@@ -48,7 +48,15 @@
       <div class="note-card">
         <div class="note-title">Lời nhắn</div>
         <div id="note-body" class="note-body">Yêu thương gửi đến em 💌</div>
-        <button class="note-close" type="button" aria-label="Đóng">Đóng</button>
+        <div class="note-reply">
+          <textarea id="note-input" rows="4" placeholder="hãy viết lời nhắn cũng như điều ước để gửi đến Blue"></textarea>
+          
+          <div class="note-actions">
+            <button class="note-close" type="button" aria-label="Đóng">Đóng</button>
+            <button id="note-send" type="button">Gửi lời nhắn</button>
+          </div>
+        </div>
+        
       </div>
     </div>
   </div>
@@ -106,6 +114,14 @@
     </section>
   </main>
 
+  <div id="success-modal" class="success-modal" hidden>
+    <div class="card">
+      <h3>Đã gửi lời nhắn!</h3>
+      <p id="success-msg">Lời nhắn của em đã được lưu 💌</p>
+      <button id="success-close" type="button" class="close">Đóng</button>
+    </div>
+  </div>
+  <div id="toast" class="toast" hidden role="status" aria-live="polite"></div>
   <script src="script.js"></script>
 </body>
 </html>

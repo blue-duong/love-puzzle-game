@@ -36,6 +36,12 @@ const $notePanel = document.getElementById("note-panel");
 const $noteBody = document.getElementById("note-body");
 const $noteClose = document.querySelector("#note-panel .note-close");
 const $noteHint = document.getElementById("note-hint");
+const $noteInput = document.getElementById("note-input");
+const $noteSend = document.getElementById("note-send");
+const $noteStatus = document.getElementById("note-status");
+const $successModal = document.getElementById("success-modal");
+const $successMsg = document.getElementById("success-msg");
+const $successClose = document.getElementById("success-close");
 const $dimOverlay = document.getElementById("dim-overlay");
 const $puzzle = document.querySelector(".puzzle");
 const $container = document.querySelector(".container");
@@ -255,6 +261,38 @@ function playWrongSound() {
   beep(220, 0.18, 'sawtooth', 0.05);
 }
 
+function saveTxt(name, content) {
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+function showSuccess(msg) {
+  if ($successModal) {
+    if ($successMsg) $successMsg.textContent = msg;
+    $successModal.hidden = false;
+  }
+}
+function handleNoteSend() {
+  const msg = ($noteInput?.value || '').trim();
+  if (!msg) {
+    if ($noteStatus) { $noteStatus.textContent = 'Hãy viết điều gì đó nhé'; $noteStatus.style.color = '#c1164f'; }
+    playWrongSound();
+    return;
+  }
+  const now = new Date();
+  const pad = (n)=> String(n).padStart(2,'0');
+  const fname = `loi_nhan_den_Blue_${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}.txt`;
+  const content = `To: Blue\nTime: ${now.toLocaleString()}\n\n${msg}\n`;
+  saveTxt(fname, content);
+  if ($noteStatus) { $noteStatus.textContent = 'Đã tạo file TXT'; $noteStatus.style.color = '#0b8f4c'; }
+  showSuccess('Đã gửi lời nhắn thành công 💖');
+  playCorrectFx();
+}
+
 function showNoteHint() {
   if ($bgNote) {
     $bgNote.hidden = false;
@@ -282,6 +320,7 @@ function restart() {
   if ($notePanel) $notePanel.classList.remove('show');
   if ($noteToggle) $noteToggle.classList.remove('pulse');
   if ($noteHint) $noteHint.hidden = true;
+  if ($successModal) $successModal.hidden = true;
   if ($dimOverlay) { $dimOverlay.classList.remove('show'); $dimOverlay.hidden = true; }
   if ($puzzle) { $puzzle.classList.remove('focus'); }
   if ($container) { $container.classList.remove('focus-mode'); }
@@ -336,6 +375,10 @@ if ($helpBtn && $helpModal) {
 
 renderQuestion();
 
+if ($successClose && $successModal) {
+  $successClose.addEventListener('click', () => { $successModal.hidden = true; });
+}
+
 if ($noteToggle && $notePanel) {
   const openPanel = () => {
     if ($notePanel.hidden) $notePanel.hidden = false;
@@ -348,6 +391,7 @@ if ($noteToggle && $notePanel) {
     $notePanel.classList.remove('show');
     setTimeout(() => { $notePanel.hidden = true; }, 280);
   });
+  if ($noteSend) $noteSend.addEventListener('click', handleNoteSend);
 }
 
 (function initHelpHint(){
