@@ -231,7 +231,6 @@ function startVideoFireworks() {
   };
   emit();
   fwInterval = setInterval(emit, 900);
-  fwStopTimer = setTimeout(stopVideoFireworks, 20000);
 }
 function stopVideoFireworks() {
   if (fwInterval) { clearInterval(fwInterval); fwInterval = null; }
@@ -277,6 +276,19 @@ function showSuccess(msg) {
     $successModal.hidden = false;
   }
 }
+function ghRepoInfo() {
+  const host = location.hostname;
+  const owner = (host.split('.')[0] || '').trim();
+  const parts = location.pathname.split('/').filter(Boolean);
+  const repo = (parts[0] || '').trim();
+  return { owner, repo };
+}
+function openIssueOnGitHub(title, body) {
+  const { owner, repo } = ghRepoInfo();
+  if (!owner || !repo) return false;
+  const url = `https://github.com/${owner}/${repo}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+  try { window.open(url, '_blank'); return true; } catch { return false; }
+}
 function handleNoteSend() {
   const msg = ($noteInput?.value || '').trim();
   if (!msg) {
@@ -289,8 +301,9 @@ function handleNoteSend() {
   const fname = `loi_nhan_den_Blue_${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}.txt`;
   const content = `To: Blue\nTime: ${now.toLocaleString()}\n\n${msg}\n`;
   saveTxt(fname, content);
-  if ($noteStatus) { $noteStatus.textContent = 'Đã tạo file TXT'; $noteStatus.style.color = '#0b8f4c'; }
-  showSuccess('Đã gửi lời nhắn thành công 💖');
+  const issued = openIssueOnGitHub('Lời nhắn từ site', content);
+  if ($noteStatus) { $noteStatus.textContent = issued ? 'Đã mở trang tạo Issue trên GitHub' : 'Đã tạo file TXT'; $noteStatus.style.color = '#0b8f4c'; }
+  showSuccess(issued ? 'Mở trang tạo Issue trên GitHub 💖' : 'Đã gửi lời nhắn thành công 💖');
   playCorrectFx();
 }
 
